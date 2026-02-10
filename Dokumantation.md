@@ -30,7 +30,7 @@ Zuerst muss VirtualBox von der offiziellen Webseite heruntergeladen werden. http
 Anschliessend folgt die Installation mit den Standartwerten. Ich werde deshalb nicht weiter darauf eingehen. ![](Pasted-image-20260210081320.png)
 
 Anschliessend kann man über den Button "Neu" eine VM erstellen. Es empfiehlt sich den Haken bei "Unbeaufsichtigter Installation zu setzen, da das Aufsetzen somit nichtmehr ganz so lang geht. Zudem kann angegeben werden, wie die VM heissen soll,  wo sie gespeichert ist, und welche ISo verwendet werden soll.  ![alt text](image-6.png)
-Nachdem man anschliessend auf Vorwärts geklickt hat, kommt ein neues Fenster, bei welchem man Benutzername und Passwort eingeben muss. Auch der Host und Domainnamen können hier eigegeben werden. (Kommt nicht wenn man keine Unbeaufsichtigte installation macht. )![[Pasted image 20260210083020.png]]
+Nachdem man anschliessend auf Vorwärts geklickt hat, kommt ein neues Fenster, bei welchem man Benutzername und Passwort eingeben muss. Auch der Host und Domainnamen können hier eigegeben werden. (Kommt nicht wenn man keine Unbeaufsichtigte installation macht. )![]("Pasted image 20260210083020.png")
 
 ![[Pasted image 20260210083632.png]]
 
