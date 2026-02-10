@@ -30,31 +30,31 @@ Zuerst muss VirtualBox von der offiziellen Webseite heruntergeladen werden. http
 Anschliessend folgt die Installation mit den Standartwerten. Ich werde deshalb nicht weiter darauf eingehen. ![](Pasted-image-20260210081320.png)
 
 Anschliessend kann man über den Button "Neu" eine VM erstellen. Es empfiehlt sich den Haken bei "Unbeaufsichtigter Installation zu setzen, da das Aufsetzen somit nichtmehr ganz so lang geht. Zudem kann angegeben werden, wie die VM heissen soll,  wo sie gespeichert ist, und welche ISo verwendet werden soll.  ![alt text](image-6.png)
-Nachdem man anschliessend auf Vorwärts geklickt hat, kommt ein neues Fenster, bei welchem man Benutzername und Passwort eingeben muss. Auch der Host und Domainnamen können hier eigegeben werden. (Kommt nicht wenn man keine Unbeaufsichtigte installation macht. )![]("Pasted image 20260210083020.png")
+Nachdem man anschliessend auf Vorwärts geklickt hat, kommt ein neues Fenster, bei welchem man Benutzername und Passwort eingeben muss. Auch der Host und Domainnamen können hier eigegeben werden. (Kommt nicht wenn man keine Unbeaufsichtigte installation macht. )![](Pastedimage20260210083020.png)
 
-![[Pasted image 20260210083632.png]]
+![](Pastedimage20260210083632.png)
 
-![[Pasted image 20260210083644.png]]
-
-
-![[Pasted image 20260210083654.png]]
+![](Pastedimage20260210083644.png)
 
 
- ![[Pasted image 20260210083706.png]]
-![[Pasted image 20260210083715.png]]
-
-![[Pasted image 20260210083725.png]]
-
-![[Pasted image 20260210083737.png]]
-
-![[Pasted image 20260210083750.png]]
-
-![[Pasted image 20260210083757.png]]
-
-![[Pasted image 20260210083804.png]]
+![](Pastedimage20260210083654.png)
 
 
-![[Pasted image 20260210083813.png]]
+ ![](Pastedimage20260210083706.png)
+![](Pastedimage20260210083715.png)
+
+![](Pastedimage20260210083725.png)
+
+![](Pastedimage20260210083737.png)
+
+![](Pastedimage20260210083750.png)
+
+![](Pastedimage20260210083757.png)
+
+![](Pastedimage20260210083804.png)
+
+
+![](Pastedimage20260210083813.png)
 
 
 
@@ -63,12 +63,11 @@ Nachdem man anschliessend auf Vorwärts geklickt hat, kommt ein neues Fenster, b
 Cloud Computing ist, wenn man Programme nicht auf dem Lokelen rechner ausführt, sondern auf einem Rechner oder Server in der Ferne. (zb. über das Internet.)
 
 **Saas** = Infrastructure as a Service 
-![[Pasted image 20260210084906.png]]
+![](Pastedimage20260210084906.png)
 
 **PaaS** = Platform as a Service
-![[Pasted image 20260210085100.png]]
-
-**IaaS** = Infrastructure as a Service ![[Pasted image 20260210085225.png]]
+![](Pastedimage20260210085100.png)
+**IaaS** = Infrastructure as a Service ![](Pastedimage20260210085225.png)
 
 Zudem gibt es seit dem Aufkommen von Docker/ Container eine neue ebene. Diese heisst **CaaS** (Container as a service).
 Diese Ebene ist dafür zuständig, containerisierten Workload auf den Ressourcen auszuführen, die eine IaaS-Cloud zur Verfügung stellt. Die Technologien dieser Ebene wie Docker, Kubernetes oder Mesos sind allesamt quelloffen verfügbar. Somit kann man sich seine private Cloud ohne Gefahr eines Vendor Lock-ins aufbauen.
@@ -265,16 +264,16 @@ Sind Bestandteile von Packer, die das Ergebnis eines Builders oder eines anderen
 
 # LB2
 
-Zuerst erstellt man eine VM. Dies wurde Bereits Beschrieben, daher ist hier nur ein Foto zu sehen. ![[Pasted image 20260210112819.png]]
+Zuerst erstellt man eine VM. Dies wurde Bereits Beschrieben, daher ist hier nur ein Foto zu sehen. ![](Pastedimag20260210112819.png)
 
-Anschliessend die VM starten. (Dies kann ein paar Minuten dauern)![[Pasted image 20260210124748.png]]
+Anschliessend die VM starten. (Dies kann ein paar Minuten dauern)![](Pastedimage20260210124748.png)
 
 
 Anschliessend verbindet man sich mit vagrant ssh mit der VM. 
 
 Achtung: Teilweise muss man 2-3 Minuten warten, bis die VM wirklich korrekt gestartet ist. 
 
-![[Pasted image 20260210125552.png]]
+![](Pastedimage20260210125552.png)
 
 
 
@@ -293,14 +292,14 @@ sudo apt-get install -y apache2
 sudo apt-get install -y webalizer 
 ```
 
-Damit man diese Commands nun nicht immer ausführen muss, kann man sich mit "history" die gemachten befehle anzeigen lassen. Die relevanten befehle können nun in das Vagrant file kopiert werden. ![[Pasted image 20260210130521.png]]
+Damit man diese Commands nun nicht immer ausführen muss, kann man sich mit "history" die gemachten befehle anzeigen lassen. Die relevanten befehle können nun in das Vagrant file kopiert werden. ![](Pastedimage20260210130521.png)
 
 (Vagrantfile mit "nano Vagrantfile" öffnen und die Befehle unter "config.vm.provision.shell" einfügen)
-![[Pasted image 20260210132011.png]]
+![](Pastedimage20260210132011.png)
 
 
 
-Wenn man die VM nun zerstört und anschliessend wieder startet, werden die 3 Commands automatisch ausgeführt. Dies lässt sich auch auf der Shell anzeigen.![[Pasted image 20260210131233.png]]
+Wenn man die VM nun zerstört und anschliessend wieder startet, werden die 3 Commands automatisch ausgeführt. Dies lässt sich auch auf der Shell anzeigen.![](Pastedimage20260210131233.png)
 
 Die Verbindung mit dem Webserver wird allerdings mit diesen anpassungen noch nicht möglich sein, da noch weitere probleme bestehen.
 - Dateien sind nach dem Zerstören der VM nicht mehr vorhanden
@@ -360,8 +359,6 @@ Ein **Reverse Proxy** steht zwischen Client und Server, leitet Anfragen weiter u
 
 
 
-
-![](Pasted%20image%2020260210140106.png)
 
 
 
