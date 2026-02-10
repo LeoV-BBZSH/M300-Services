@@ -346,7 +346,51 @@ Zudem muss das Outputverzeichniss korrigiert werden.
 sudo sed -i -e"s:/var/www/webalizer:/var/www/html/webalizer:" /etc/webalizer/webalizer.conf 
 ```
 
-Zum schluss muss der Job für 
+Zum Schluss muss der Job für die Erzeugung der Ausgaben noch manuell ausgeführt werden. 
+
+```
+sudo /etc/cron.daily/webalizer 
+```
+
+
+Das Vagrant File sollte fertig zusammengebaut so aussehen:
+
+
+```
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "forwarded_port", guest:80, host:8080, auto_correct: true
+  config.vm.synced_folder ".", "/var/www/html"  
+config.vm.provider "virtualbox" do |vb|
+  vb.memory = "512"  
+end
+config.vm.provision "shell", inline: <<-SHELL
+  # Packages vom lokalen Server holen
+  # sudo sed -i -e"1i deb {{config.server}}/apt-mirror/mirror/archive.ubuntu.com/ubuntu xenial main restricted" /etc/apt/sources.list 
+  # Debug ON!!!
+  set -o xtrace  
+  sudo apt-get update
+  sudo apt-get -y install apache2 webalizer 
+  sudo /etc/cron.daily/webalizer
+  # Testdaten erzeugen
+  curl http://localhost/ >/dev/null 2>&1
+  curl http://localhost/ >/dev/null 2>&1
+  curl http://localhost/ >/dev/null 2>&1
+  curl http://localhost/ >/dev/null 2>&1
+  curl http://localhost/bad >/dev/null 2>&1
+  # Patch falsches Output Verzeichnis von webalizer 
+  sudo sed -i -e"s:/var/www/webalizer:/var/www/html/webalizer:" /etc/webalizer/webalizer.conf 
+  sudo mkdir -p /var/www/html/webalizer 
+  # Logfiles von Apache rotieren und neue Analyse
+  sudo logrotate -f /etc/logrotate.d/apache2
+  sudo /etc/cron.daily/webalizer  
+SHELL
+end
+```
+
+
+![](Pasted%20image%2020260210145219.png)
+
 
 
 #  25 Infrastruktur-Sicherheit
