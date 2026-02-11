@@ -404,6 +404,732 @@ Ein **Reverse Proxy** steht zwischen Client und Server, leitet Anfragen weiter u
 
 
 
+# 30 Container
+Container ermöglichen es, Software überall identisch auszuführen – lokal, im Rechenzentrum oder in der Cloud. Entwickler erhalten reproduzierbare Umgebungen, Administratoren sparen Zeit bei Konfiguration und Abhängigkeiten.
+
+**Merkmale:**
+
+- Teilen Ressourcen mit dem Host
+    
+- Sehr schnell startbar
+    
+- Portierbar und leichtgewichtig
+    
+- Ideal für die Cloud
+
+**Geschichte**
+- Ursprünge in UNIX mit `chroot` (Dateisystem-Isolation)
+    
+- 1998: FreeBSD Jails erweitern Isolation auf Prozesse
+    
+- 2001: Solaris Zones (umfassend, aber Solaris-gebunden)
+    
+- 2001/2005: Virtuozzo → OpenVZ (Linux-Container-Technologie)
+    
+- Google entwickelt CGroups für Linux
+    
+- 2008: LXC kombiniert CGroups, Namespaces und chroot
+    
+- 2013: Docker macht Container massentauglich und bringt den Durchbruch in den Mainstream
+
+**Was sind Microservices?**
+Microservices sind ein grosser Hype. Am besten beschreiben lassen sie sich als allternativer Architekturstil zu den tradizionellen Applikationen. Es können sehr einfach viele, unabhängige Prozesse erstellt werden. Je nach konfiguration, können die Services miteinander kommunizren, oder eben nicht. Die Services können auch alle in einer anderen Programiersprache Geschrieben sein. Zudem haben die Services eine Dezentrale Führung. 
+Microservices sind aber keine SOA, oder ein Allheilmittesl. Auch sie haben nachteile. 
+
+**Vorteile**
+- Einfach einen einzelnet Dienst zu verstehen
+- Einzelne Dienste können einfach getestet, deployed oder gemanaged werden. 
+- Keine Abhängigkeit von bestimmten Sprachen. 
+- Skalierung ist effizienter als bei einer Monolith Architektur
+
+**Herausforderungen**
+- Einzelne Services können ausfallen
+- Remote aufrufe sind teurer
+- Features können sich über mehrere Dienste erstrecken. 
+- Änderungsmanagement ist komplexer
+- Komplexität wird zum operativen Betrieb verschoben. 
+
+Es ist wichtig, das die Dokumentation kurz genug ist, damit sie verstanden werden kann. Zudem muss das verhalten vorhersagbar sein. 
+
+# Docker
+
+Es läuft auf allen Systemen gleich. Wenn es auf einem Laptop läuft, läuft es auch auf dem Server.  Docker sind zudem effizienter im Ressourcenbrauch, als virtuelle Maschinen. 
+
+- **Image:** Ein statischer Schnappschuss (Template), der das Betriebssystem, die Software und den Code enthält. Sie können nicht verändert, sondern nur neu gebaut werden. 
+    
+- **Container:** Eine laufende Instanz eines Images 
+    
+- **Dockerfile:** Eine Textdatei mit Anweisungen, wie ein Image Schritt für Schritt aufgebaut werden soll
+
+
+##### Befehle im Dockerfile
+**FROM**= Wählt das Basis-Image aus (standardmässig von https://hub.docker.com )
+**WORKDIR**= Setzt das Arbeitsverzeichnis für alle folgenden RUN-, CMD-, ENTRYPOINT-, ADD oder COPY-Anweisungen.
+**COPY**= - Wird verwendet, um Dateien aus dem Build Context in das Image zu kopieren. Es gibt die zwei Formen COPY src dest und COPY ["src", "dest"]. Das JSON-Array-Format ist notwendig, wenn die Pfade Leerzeichen enthalten.
+**Run**= wird ausgeführt wenn conteiner gebaut wird
+**CMD**= wird ausgeführt wenn container startet (Wenn auch ENTRYPOINT konfiguriert ist, wird die anweisung als argument für ENTRYPOINT verwendet)
+**EXPOSE**=Gibt an, auf welchem Port der Container hören soll (z. B. Port 80 für Webserver)
+**ADD**= Kopiert Dateien aus dem Build Context oder von URLs in das Image.
+**ENTRYPOINT**=Legt eine ausführbare Datei (und Standardargumente) fest, die beim Start des Containers laufen soll.
+- Jegliche CMD-Anweisungen oder an `docker run` nach dem Imagenamen übergebenen Argumente werden als Parameter an das Executable durchgereicht.
+- ENTRYPOINT-Anweisungen werden häufig genutzt, um "Start-Scripts" anzustossen, die Variablen und Services initialisieren, bevor andere übergebene Argumente ausgewertet werden.
+**ENV**=Setzt Umgebungsvariablen im Image.
+**SHELL**= Die Anweisung SHELL erlaubt es seit Docker 1.12, die Shell für den folgenden RUN-Befehl zu setzten. So ist es möglich, dass nun auch direkt bash, zsh oder Powershell-Befehle in einem Dockerfile genutzt werden können.
+**USER**= Setzt den Benutzer (über Name oder UID), der in folgenden RUN-, CMD- oder ENTRYPOINT-Anweisungen genutzt werden soll.
+**VOLUME**=Deklariert die angegebene Datei oder das Verzeichnis als Volume. Besteht die Datei oder das Verzeichnis schon im Image, wird sie bzw. es in das Volume kopiert, wenn der Container gestartet wird.
+
+
+Aus dem Dockerfile kann mit `docker build -t hello-world .`  das fertige Image erstellt werden. 
+Anschliessend kann der docker mit `docker run` gestartet werden. Zum Portforwarding wird `-p 80:80` genutzt. (dabei ist die Linke seite der Port am laptop und rechts jener im Container 
+Die Funktionsfähigkeit kann mit   `docker exec -it [containername] bash` geprüft werden. (Dieser Command verindet die lokale Shell mit dieser der VM, man kann so also Command im Container ausführen.)
+
+Da Änderungen am Code im laufenden Container standardmäßig nicht sofort sichtbar sind, nutzt man Volumes
+
+- Mit dem Flag `-v` wird ein lokaler Ordner direkt in den Container "gemountet". Änderungen am Code auf dem PC sind so sofort im Container wirksam, ohne dass ein Rebuild nötig ist
+
+Best Practice: Immer nur 1 Hautaufgabe pro Container. 
+
+**Docker Deamon**  
+
+- Erstellen, Ausführen und Überwachen der Container
+- Bauen und Speichern von Images
+
+Der Docker Daemon wird normalerweise durch das Host-Betriebssystem gestartet.
+
+**Docker Client**  
+
+- Docker wird über die Kommandozeile (CLI) mittels des Docker Clients bedient
+- Kommuniziert per HTTP REST mit dem Docker Daemon
+
+**Docker Registry**  
+
+- In Docker Registries werden Images abgelegt und verteilt
+
+Die Standard-Registry ist der Docker Hub, auf dem tausende öffentlich verfügbarer Images zur Verfügung stehen, aber auch "offizielle" Images.
+
+Viele Organisationen und Firmen nutzen eigene Registries, um kommerzielle oder "private" Images zu hosten, aber auch um den Overhead zu vermeiden, der mit dem Herunterladen von Images über das Internet einhergeht.
+
+## Befehle
+
+Um einen Docker zu starten, wird der folgende command verwendet. 
+```
+docker run
+```
+
+Nachde man docker irgendwo installiert hat, sollte man die installation mit dem folgenden Command testen. Es darf dabei keine Fehlermeldung kommen. 
+
+```
+docker run hello-world
+```
+
+Um einen Container mit interaktiver Shel zu verwenden, nutz man den folgenden Befehl:
+```
+docker run -it ubuntu /bin/bash
+```
+
+Der folgende Command lässt denn Container im Hintergrund laufen, und schaltet ihn nach 20 Sekunden aus. 
+```
+docker run -d ubuntu sleep 20
+```
+
+Startet einen Container im Hintergrund und löscht (remove) diesen nach Beendigung des Jobs:
+
+```shell
+    $ docker run -d --rm ubuntu sleep 20
+```
+
+Startet einen Container im Hintergrund und legt eine Datei an:
+
+```shell
+    $ docker run -d ubuntu touch /tmp/lock
+```
+
+Startet einen Container im Hintergrund und gibt das ROOT-Verzeichnis (/) nach STDOUT aus:
+
+```shell
+    $ docker run -d ubuntu ls -l
+```
+
+**docker ps**  
+
+- Gibt einen Überblick über die aktuellen Container, wie z.B. Namen, IDs und Status.
+
+Aktive Container anzeigen:
+
+```shell
+    $ docker ps
+```
+
+Aktive und beendete Container anzeigen (all):
+
+```shell
+    $ docker ps -a
+```
+
+Nur IDs ausgeben (all, quit):
+
+```shell
+    $ docker ps -a -q
+```
+
+**docker images**  
+
+- Gibt eine Liste lokaler Images aus, wobei Informationen zu Repository-Namen, Tag-Namen und Grösse enthalten sind.
+
+Lokale Images ausgeben:
+
+```shell
+    $ docker images
+```
+
+Alternativ auch mit `... image ls`:
+
+```shell
+    $ docker image ls
+```
+
+**docker rm und docker rmi**  
+
+- `docker rm`
+    - Entfernt einen oder mehrere Container. Gibt die Namen oder IDs erfolgreich gelöschter Container zurück.
+- `docker rmi`
+    - Löscht das oder die angegebenen Images. Diese werden durch ihre ID oder Repository- und Tag-Namen spezifiziert.
+
+Docker Container löschen:
+
+```shell
+    $ docker rm [name]
+```
+
+Alle beendeten Container löschen:
+
+```shell
+    $ docker rm `docker ps -a -q`
+```
+
+Alle Container, auch aktive, löschen:
+
+```shell
+    $ docker rm -f `docker ps -a -q`
+```
+
+Docker Image löschen:
+
+```shell
+    $ docker rmi ubuntu
+```
+
+Zwischenimages löschen (haben keinen Namen):
+
+```shell
+    $ docker rmi `docker images -q -f dangling=true`
+```
+
+**docker start**  
+
+- Startet einen (oder mehrere) gestoppte Container.
+    - Kann genutzt werden, um einen Container neu zu starten, der beendet wurde, oder um einen Container zu starten, der mit `docker create` erzeugt, aber nie gestartet wurde.
+
+Docker Container neu starten, die Daten bleiben erhalten:
+
+```shell
+    $ docker start [id]
+```
+
+Container Stoppen (Dten bleiben erhalten) 
+``` shell
+docker stop
+```
+
+Um den Container sofert zu stoppen kann folgendes verwendet werden.
+```shell
+docker kill
+```
+
+Zudem gibt es noch:
+- `docker logs`
+    - Gibt die "Logs" für einen Container aus. Dabei handelt es sich einfach um alles, was innerhalb des Containers nach STDERR oder STDOUT geschrieben wurde.
+- `docker inspect`
+    - Gibt umfangreiche Informationen zu Containern oder Images aus. Dazu gehören die meisten Konfigurationsoptionen und Netzwerkeinstellungen sowie Volumes-Mappings.
+- `docker diff`
+    - Gibt die Änderungen am Dateisystem des Containers verglichen mit dem Image aus, aus dem er gestartet wurde.
+- `docker top`
+    - Gibt Informationen zu den laufenden Prozessen in einem angegebenen Container aus.
+
+
+
+
+
+### 05 - Image-Bereitstellung
+Eigene Docker-Images können für Kollegen, CI-Server oder Endanwender bereitgestellt werden. Sie lassen sich über ein Dockerfile neu bauen, mit `docker pull` aus einer Registry laden oder mit `docker load` aus einer Archivdatei importieren.
+
+Images bestehen aus einem Namen und einem Tag (z.B. `ubuntu:16.04`). Wird kein Tag angegeben, verwendet Docker automatisch `:latest`. Beim Erstellen oder mit `docker tag` können Namen und Tags vergeben werden. Tags dürfen nur Buchstaben, Zahlen, `.` und `-` enthalten, maximal 128 Zeichen lang sein und nicht mit `.` oder `-` beginnen.
+
+Ein klares und konsistentes Namensschema ist wichtig für einen sauberen Entwicklungs-Workflow, da Docker selbst nur wenige Regeln vorgibt.
+
+Der `latest`-Tag ist lediglich ein Standardwert ohne besondere technische Bedeutung. Wird kein Tag angegeben, nutzt Docker automatisch das mit `latest` markierte Image – existiert dieses nicht, tritt ein Fehler auf.
+
+#### Docker Hub
+Die einfachste Möglichkeit, eigene Docker-Images bereitzustellen, ist der Docker Hub, die offizielle Online-Registry von Docker Inc. Dort können öffentliche Repositories kostenlos genutzt werden, für private Repositories ist eine kostenpflichtige Variante verfügbar.
+
+Um ein eigenes Image hochzuladen, erstellt man zuerst einen Account auf Docker Hub. Danach wird das Image mit dem eigenen Benutzernamen getaggt (z.B. `docker tag mysql username/mysql`) und anschliessend mit `docker push username/mysql` hochgeladen. Im Dashboard kann das Image danach beschrieben und verwaltet werden.
+
+Mit `docker search` lassen sich Images auf Docker Hub suchen, und mit `docker pull` können Images heruntergeladen werden, zum Beispiel um Build-Zeiten zu verkürzen.
+
+#### Import/Export von Images und Containern
+Um Container und Images einfach nur zwischen verschiedenen Hosts hin und her zu verschieben, wird keine Registry benötigt.
+
+Container können mittels `docker export` und `docker import` und Images mittels `docker save` und `docker load` von/nach Verzeichnisse kopiert werden.
+
+**Container**  
+
+Container exportieren:
+
+```shell
+    $ docker ps
+
+        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+        7fd371d71357        vagrant_apache      "/bin/sh -c '/bin/..."   3 hours ago         Up 3 hours          0.0.0.0:8080->80/tcp   vagrant_apache_1
+
+    $ docker export vagrant_apache_1 -o va1.tar
+
+    $ ls -lh
+
+        total 200M
+        -rwxrwxrwx 1 ubuntu ubuntu  731 Feb  2 08:28 Dockerfile
+        -rwxrwxrwx 1 ubuntu ubuntu 200M Feb  2 12:36 va1.tar
+```
+
+Container importieren, z.B. auf einem anderen Host (dabei wir ein Image erzeugt):
+
+```shell
+    $ docker import va1.tar va1
+
+    $ docker images
+
+        REPOSITORY          TAG                 IMAGE ID            CREATED                  SIZE
+        va1                 latest              167ec5ca640c        Less than a second ago   200 MB
+```
+
+**Images**  
+
+Eigene Images ausgeben:
+
+```shell
+    /vagrant/mysql$ docker images
+
+        REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+        mysql               latest              24be8efe0428        2 hours ago         346 MB
+        apache              latest              4221b4f12ce8        2 hours ago         225 MB
+
+```
+
+Images im TAR-Format mit `save` sichern:
+
+```shell
+    /vagrant/mysql$ docker save mysql -o mysql.tar
+    /vagrant/mysql$ docker save apache -o apache.tar
+```
+
+Images mit `load` wiederherstellen:
+
+```shell
+    $ docker load -i mysql.tar  
+```
+
+#### Private Registry
+Weder das ständige Exportieren und inporteiren, noch das Laufende neubauen eines Images ist sinvoll. Es gibt desshakb auch die möglichkeit, eine andere Registry als den Docker Hub zu verwenden. 
+
+##### Eigene Registry Hosten
+
+```shell
+    $ sudo docker pull registry:2
+    
+    $ sudo docker run -d -p 5000:5000 --restart=always --name registry \ 
+    -v /var/spool/docker-registry:/var/lib/registry registry:2
+```
+
+##### Docker Client auf Registry zusteuern
+**Docker Client auf Registry zusteuern**  
+Die Docker Clients steuern per default auf Docker Hub zu. Damit sie mit der lokalen Registry arbeiten kann, ist die Datei `/etc/docker/daemon.json` mit folgendem Inhalt zu erstellen und Docker neu zu starten (`sudo docker restart`):
+
+```shell
+    { "insecure-registries":["{{config.docker}}:5000"] }
+```
+
+Anschliessend können die vorhanden Images von unserer lokalen Docker Registry geholt werden (pull):
+
+```shell
+    $ docker pull {{config.docker}}:5000/ubuntu
+```
+
+(...) oder geschrieben werden (push):
+
+```shell
+    $ docker tag ubuntu {{config.docker}}:5000/myubuntu
+    $ docker push {{config.docker}}:5000/myubuntu
+```
+
+**Wichtig:** `{{config.docker}}` durch installierten Server ersetzen.
+
+## Fragen zu 30 - Container
+Was ist der Unterschied zwischen Vagrant und Docker?
+
+Vagrant erstellt auf einfache weise eine Virtuelle Maschiene, wobei docker nur einen/mehrer Container erstellt. 
+
+---
+
+Welches Tools aus dem Docker Universum ist Vergleichbar mit Vagrant?
+
+docker machine 
+
+---
+
+Was macht der Docker Provisioner von Vagrant?
+
+Installiert docker auf der erstellten VM
+
+---
+
+Welche Linux Kernel Funktionalität verwenden Container?
+
+ Linux Namespaces
+---
+
+Welches Architekturmuster verwendet der Entwickler wenn er Container einsetzt?
+
+Microservices
+
+---
+
+Welches sind die drei Hauptmerkmale (abgeleitet vom Ur-Unix) von Microservices?
+
+Ein Programm soll nur eine Aufgabe erledigen, und das soll es gut machen. Programme sollen zusammenarbeiten können. Nutze eine universelle Schnittstelle.
+
+---
+
+### Docker
+
+---
+
+Was ist der Unterschied zwischen einem Docker Image und einem Container?
+
+Ein Image ist ein Schnapschuss, dieser kann icht bearbeitet, sondern nur neu erstellt werden. Ein Container ist das was läuft, und auch bearbeitet werden kann. Container basieren auf Images. 
+
+---
+
+Was ist der Unterschied zwischen einer Virtuellen Maschine und einem Docker Container?
+
+Ein Docker Container läuft direkter auf dem Host, hat weniger Overhead und ist effiziennter. 
+
+---
+
+Wie bekomme ich Informationen zu einem laufenden Docker Container?
+
+ docker logs, docker inspect
+
+---
+
+Was ist der Unterschied zwischen einer Docker Registry und einem Repository
+
+ In der Docker Registry werden die Container Images gespeichert. Ein Repository speichert pro Container Image verschiedene Versionen von Images.
+
+---
+
+Wie erstelle ich ein Container Image
+
+docker build
+
+---
+
+In welcher Datei steht welche Inhalte sich im Container Image befinden?
+
+Dockerfile
+
+---
+
+Der erste Prozess im Container bekommt die Nummer?
+
+1
+
+---
+
+Welche Teile von Docker sind durch Kubernetes obsolet geworden, bzw. sollten nicht mehr verwendet werden?
+
+Swarm, Compose, Network, Volumes
+
+---
+
+Welche Aussage ist besser (siehe auch [The Twelve-Factor App](https://12factor.net/))?
+
+- a) Dockerfile sollten möglichst das Builden (CI) und Ausführen von Services beinhalten, so ist alles an einem Ort und der Entwickler kann alles erledigen.
+- b) Das Builden und Ausführen von Services ist strikt zu trennen. Damit saubere und nachvollziehbare Services mittels CI/CD Prozess entstehen.
+b
+
+---
+
+### Docker Hub
+
+---
+
+Was ist Docker Hub?
+
+Antwort  Ein Container Registry, wo Container Image gespeichert werden. Docker Hub wird durch die Firma Docker zur Verfügung gestellt.
+
+---
+
+Welches sind die Alternativen?
+
+Jede Person/ unternehmen kann eine eigene Registry Hosten. 
+
+---
+
+Warum sollte eine eigene Docker Registry im Unternehmen verwendet werden?
+
+Weil niemand garantiert, das die Images auf dem Dockerhub wirklich sicher sind. 
+
+---
+
+Warum sollten Versionen `tag` von Images immer angegeben werden?
+
+Da sonst latest verwendet wird. Somit können Updates schlechter kontrolliert werden. 
+
+---
+
+Was ist der Unterschied zwischen `docker save`/`docker load` und `docker export`/`docker import`?
+
+Docker save/load ist für Images, Export/Import für Container
+## LB3
+
+Ich verwende Docker Desktop auf Windows. 
+
+Zuerst müssen die Images gepullt werden. (Achtung, kann lange dauern, vorallem über das WLAN des BBZ Schaffhauen) ![](Pasted%20image%2020260211104527.png)
+![](Pasted%20image%2020260211105452.png)
+
+Anschliessend kann der docker gestartet werden. es müssen dazu einige zusätzliche Arrgumente übergeben werden. ich habe die folgenden genutzt:
+
+Mysql:
+```shell
+docker run -d \
+--name ghost_mysql \
+-e MYSQL_ROOT_PASSWORD=admin \
+-e MYSQL_USER=ghost \
+-e MYSQL_PASSWORD=123Password \
+-e MYSQL_DATABASE=ghost \
+--restart=always \
+mysql:5.7
+```
+
+![](Pasted%20image%2020260211111352.png)
+
+Ghost:
+
+```shell
+docker run -d \
+--name ghost \
+--link ghost_mysql:mysql \
+-e database__client=mysql \
+-e database__connection__host=ghost_mysql \
+-e database__connection__user=ghost \
+-e database__connection__password=123Password \
+-e database__connection__database=ghost \
+-p 2368:2368 \
+--restart=always \
+ghost:1-alpine
+
+```
+
+Nun mit `docker ps` anzeigen, ob beide Container wirklich laufen. 
+![](Pasted%20image%2020260211112420.png)
+
+Anschliessend im Browser `localhost:2368` öffnen. (Oder den Port, den man auf dem laptop freigegeben hat)
+![](Pasted%20image%2020260211114013.png)
+
+Da ich in der Aufgabe vorher mit Docker Desktop und nicht mit Vagrant gearbeitet habe, nehme ich nun das Beispiel vagrant file, um es in ein Docker Image umzuwandeln. 
+
+Das Vagrantfile sieht folgendermaasen aus:
+
+
+```shell
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  config.vm.box = "ubuntu/xenial64"
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+   config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # Disable the default share of the current code directory. Doing this
+  # provides improved isolation between the vagrant box and your host
+  # by making sure your Vagrantfile isn't accessible to the vagrant box.
+  # If you use this you may want to enable additional shared subfolders as
+  # shown above.
+   config.vm.synced_folder ".", "/var/www/html"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+   config.vm.provider "virtualbox" do |vb|
+  #   # Display the VirtualBox GUI when booting the machine
+  #   vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+     vb.memory = "512"
+  end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+   config.vm.provision "shell", inline: <<-SHELL
+     apt-get update
+     apt-get install -y apache2
+   SHELL
+end
+```
+
+Falls ein timeout kommt, kann man die VM mit dem gleichen Command einfach nochmals starten. vagrant erkennt das Problem automatisch, und macht bei der ersten VM weiter. ![](Pasted%20image%2020260211131259.png)
+
+Nachdem die Vagrant VM gestartet ist, sollte über localhost:8080 die default webpage kommen. ![](Pasted%20image%2020260211131326.png)
+
+Wenn man das Vagrantfile nun in ein Dockerfile Umschreibt, sieht das ca. so aus:
+
+``` shell
+FROM ubuntu:14.04
+RUN apt-get update
+RUN apt-get -q -y install apache2 
+# Konfiguration Apache
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+RUN mkdir -p /var/lock/apache2 /var/run/apache2
+EXPOSE 80
+VOLUME /var/www/html
+CMD /bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND"
+```
+
+Nun aus dem Dockerfile ein image machen. Dies sollte dann so aussehen. ![](Pasted%20image%2020260211135727.png)
+
+Und nun doch den Conteiner starten. Es wird nun wieder die Default seite angezeigt. ![](Pasted%20image%2020260211140832.png)
+![](Pasted%20image%2020260211140810.png)
+Nun würde noch die Konfiguration der Sicherheit & die Begrenzung der Ressourcen kommen, doch dies wird erst im nächsten Kapitel gemacht. 
+
+## Protokolierung und Überwachung
+#### Logging
+
+Docker speichert standardmaessig alles von **STDOUT und STDERR**.  
+Logs können mit folgendem Befehl angezeigt werden:
+
+`docker logs <container>`
+
+Mit `--log-driver` kann die Logging-Methode festgelegt werden, z. B.:
+
+- `json-file` → Standard (Speicherung als JSON-Datei)
+    
+- `syslog` → Weiterleitung an das System-Log des Hosts
+    
+- `none` → Logging deaktivieren
+    
+
+---
+
+#### Monitoring
+
+Bei vielen Containern braucht es eine Lösung, die:
+
+- den Systemzustand übersichtlich darstellt
+    
+- vor Ressourcenengpaessen (CPU, RAM, Speicher) warnt
+    
+- Performance-Probleme oder Fehler frühzeitig erkennt
+---
+#### cAdvisor
+
+**cAdvisor (Container Advisor)**  ist eins der weit verbreitetsten Monitoring-Tools für Docker.
+
+- Zeigt CPU-, RAM-, Netzwerk- und Speicherverbrauch pro Container
+    
+- Stellt die Daten grafisch in einer Weboberflaeche dar
+    
+- Läuft selbst als Container
+    
+
+Starten kann man cAdvisor mit folgendem Befehl:
+
+```
+docker run -d \   --name cadvisor \   -v /:/rootfs:ro \   -v /var/run:/var/run:rw \   -v /sys:/sys:ro \   -v /var/lib/docker/:/var/lib/docker:ro \   -p 8080:8080 \   google/cadvisor:latest
+
+```
+
+
+#### Container sichern und Beschränken
+Wichtige Sicherheitsaspekte in containerbasierten Umgebungen sind:
+
+- **Kernel-Exploits:** Container teilen sich den Kernel mit dem Host. Schwachstellen im Kernel können daher alle Container und den gesamten Host betreffen – im Gegensatz zu VMs, die stärker isoliert sind.
+    
+- **Denial-of-Service (DoS):** Container teilen sich Systemressourcen. Wenn ein Container Ressourcen wie CPU, RAM oder UIDs monopolisiert, kann er andere Container lahmlegen.
+    
+- **Container-Breakouts:** Gelingt es einem Angreifer, aus einem Container auszubrechen, kann er unter Umständen auf den Host oder andere Container zugreifen. Besonders kritisch ist dies bei privilegierten Containern (z.B. root).
+    
+- **Vergiftete Images:** Unsichere oder manipulierte Images können Schadcode enthalten. Daher müssen Herkunft, Integrität und Aktualität der Images überprüft werden.
+    
+- **Verratene Geheimnisse:** Container benötigen oft Zugangsdaten (z.B. API-Keys, Passwoerter). Werden diese kompromittiert, sind angebundene Dienste gefährdet – besonders in dynamischen Microservices-Architekturen.
+
+Um eine Möglichst hohe Sicherheit zu gewährleisten, sollten die Nachfolgenden Dinge beachtet werden. 
+
+#### Least Privilege
+Man sollte darauf achten, dass in den Containern so wenige Berechtigungen wie möglich vergeben werden, dass im Fall eines Angriffes auch auf dem Host Rechner nicht alle berechtiungen vorhanden sind. 
+Folgende Tipps helfen dabei:
+- ... Sicherstellen, dass Prozesse in Containern nicht als `root` laufen, sodass das Ausnutzen von Sicherheitslücken in einem Prozess, dem Angreifer keine root-Berechtigungen geben.
+- ... Dateisysteme schreibgeschützt einsetzen, sodass Angreifer keine Daten überschreiben oder böswillige Skripten speichern können.
+- ... Kernel-Aufrufe, die ein Container ausführen kann, einschränken, um die Angriffsoberfläche zu verringern.
+- ... Ressourcen begrenzen, die ein Container nutzen kann, um DoS-Angriffe zu verhindern, bei denen ein kompromittierter Container oder eine Anwendung so viele Ressourcen aufbraucht (wie z.B. Speicher oder CPU-Zeit), sodass der Host zum Halten kommt.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
