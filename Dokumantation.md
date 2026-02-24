@@ -1120,16 +1120,330 @@ Folgende Tipps helfen dabei:
 - ... Kernel-Aufrufe, die ein Container ausführen kann, einschränken, um die Angriffsoberfläche zu verringern.
 - ... Ressourcen begrenzen, die ein Container nutzen kann, um DoS-Angriffe zu verhindern, bei denen ein kompromittierter Container oder eine Anwendung so viele Ressourcen aufbraucht (wie z.B. Speicher oder CPU-Zeit), sodass der Host zum Halten kommt.
 
+#### Container Absichern
+- Container in VM oder dediziertem Host betreiben.
+- Nur Reverse-Proxy ist öffentlich erreichbar, andere Services intern/VPN.
+- Nicht als root laufen lassen, Images verifizieren (Hash).
+- Monitoring & Alarme bei auffälligem Verhalten.
+- Aktuelle Software, Produktivmodus, AppArmor oder SELinux aktiv.
+- Dienste mit Passwort- und Zugriffsschutz absichern.
+- Zusätzliche Härtung:
+- Unnötige setuid-Binaries entfernen.
+- Dateisysteme möglichst read-only.
+- Kernel-Rechte und Ressourcen (Speicher -m, Prozesse via ulimit) begrenzen.
+- Interne Kommunikation verschlüsseln.
+- Regelmässige Security-Audits durchführen.
+
+Eine weitere Hilfreiche Möglichkeit ist es, auf einem Host nicht Container von mehreren Benutzern laufen zulassen, sondern nur von einem. Sollte nun ein Benutzer aus einem Container ausbrechen, kann dieser nur auf seine eigenen Container zugreifen, und nicht auf andere. 
+
+### weitere Nützliche Dinge
+
+**kein root user verwenden**
+Mit dem folgenden Command im Dockerfile wird der Benutzer "User" erstellt, damit der Container nicht mit root läuft. 
+```shell
+    $ RUN groupadd -r user_grp && useradd -r -g user_grp user
+    $ USER user
+```
+
+**setuid/setgid-Binaries entfernen**  
+Die Wahrscheinlichkeit, dass eine Anwendung keine setuid- oder setgid-Binaries benötigt, ist recht hoch. Können wir solche Binaries deaktivieren oder entfernen, verhindern wir, dass sie zur unerlaubten Rechteauswertung eingesetzt werden.
+
+```shell
+    $ FROM ubuntu:14.04
+
+       ... Installation der benötigten Software
+       ... User anlegen
+
+    $ RUN find / -perm +6000 -type f -exec chmod a-s {} \; || true
+```
+
+
+**Speicher begrenzen**
+Wie bereits erwähnt, wird das vor allem gegen (D)DOS angriffe eingesetzt.  Nachfolgend findet sich ein Beispielcommand zur begrenzung des Speichers. (Anzahl und immage im command anpassen)
+```
+docker run -m 128m --memory-swap 128m amouat/stress stress --vm 1 --vm-bytes 127m -t 5s
+```
+
+**CPU begrenzen**
+Das gleiche was mit dem Speicher funktioniert, geht auch mit der CPU. 
+
+```
+$ docker run -d --name load1 -c 2048 amouat/stress
+$ docker run -d --name load2 amouat/stress
+$ docker run -d --name load3 -c 512 amouat/stress
+$ docker run -d --name load4 -c 512 amouat/stress
+
+$ docker stats $(docker inspect -f {{.Name}} $(docker ps -q))
+```
+
+**anzahl neustarts begrenzen**
+Auch die maximale anzahl an neustarts kann begrenzt werden. Wenn ein Container nach 10 mal nicht gestartet hat, wird er es sehr wahrscheindlic beim 100sten mal auch nicht tuen. Der Beispielcommand begrenzt die maximale anzahl neustarts auf 10 mal. 
+```
+$ docker run -d --restart=on-failure:10 my-flaky-image
+```
+
+**filesystem auf read-only setzen**
+Wenn Angreifer auf dem gesamtes Dateisystem keine rechte haben, wird eine grosse Zahl der Angriffe unmöglich.  Um das Dateisystem eines Containers auf read only zu setzen, kann der folgende Command verwendet werden.   
+```shell
+$ docker run --read-only ubuntu touch x
+```
 
 
 
 
+## Kontinuierliche Integration
+Dies beschreibt den Prozess des Zusammenfügens von Komponenten zu einer Anwendung. Bei jedem Einchecken wird das System automatisch neu gebaut, getestet und ausgewertet. Ziel ist es, die Softwarequalität zu steigern und Fehler früh zu erkennen.
+**Grundsätze**
+- Gemeinsame Codebasis
+- Automatisierte Übersetzung
+- Kontinuierliche Test-Entwicklung
+- Häufige Integration
+- Integration in den Hauptbranch
+- Kurze Testzyklen
+- Gespiegelte Produktionsumgebung
+- Einfacher Zugriff
+- Automatisiertes Reporting
+
+Ein Unittest sieht wie folgt aus: 
+![](Pasted%20image%2020260224082559.png)
+
+### Jenkins & Blue Ocean
+Jenkins ist ein beliebter Open-Source-CI-Server (Continuous Integration). Blue Ocean vereinfacht Jenkins für die bedürfnisse von normalen entwicklern. 
+
+Für Jenkins und Blue Ocean braucht es eine Applikation bzw. einen Service welche in einem Git-Repository gespeichert ist und im Repository selbst die Datei `Jenkinsfile`.
+
+```groovy
+	pipeline {
+    	agent none
+	    stages {
+	        stage('Build') {
+			    agent {
+			        docker {
+			            image 'maven:3-alpine'
+			            args '-v /root/.m2:/root/.m2'
+				    }
+			    } 
+        stage('Build Images') { 
+        	agent any
+            steps {
+            		unstash 'jar'
+            		sh 'ls -l scs-demo-esi-order/target/'
+            		sh 'cd docker/varnish      && /usr/bin/docker build -t misegr/scsesi_varnish .'
+            		sh 'cd scs-demo-esi-common && /usr/bin/docker build -t misegr/scsesi_common .'
+            		sh 'cd scs-demo-esi-order  && /usr/bin/docker build -t misegr/scsesi_order .'
+            }
+        }
+```
+
+Blue Ocean kann direkt mit docker run gestartet werden:
+    
+```
+$ docker run \
+    --rm \
+    -u root \
+    -p 8082:8080 \
+    -v jenkins-data:/var/jenkins_home \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$HOME":/home \
+    jenkinsci/blueocean
+```
+Anschliessend kann das Webinterface mit [http://localhost:8082/](http://localhost:8082/) geöffnet werden. 
+
+## Fragen
+Warum sollten Container überwacht werden?
+Damit Fehler oder Angriffe frühzeitig erkannt werden können. 
+
+---
+
+Was ist das syslog und wo ist es zu finden?
+Systemweiter Log eines Linux Hosts. Verzeichnis /var/log.
+
+---
+
+Was ist stdout, stderr, stdin?
+
+Standard Output, Standard Error Ausgabe und Standard Input Eingabe.
+
+---
+
+### Container sichern & beschränken
+
+---
+
+Wie kann `docker run -v /:/homeroot -it ubuntu bash` durch Normale User verhindert werden?
+
+Indem man es so einstellt, dass nur root Container starten darf. 
+
+---
+
+Wie können verschiedene Mandanten getrennt werden?
+
+Indem für jeden Benutzer ein eigener Host verwendet wird/ eigene VMs
+
+---
+
+Wie kann der Ressourcenverbrauch von Containern eingeschränkt werden?
+
+**Speicher begrenzen**
+Wie bereits erwähnt, wird das vor allem gegen (D)DOS angriffe eingesetzt.  Nachfolgend findet sich ein Beispielcommand zur begrenzung des Speichers. (Anzahl und immage im command anpassen)
+```
+docker run -m 128m --memory-swap 128m amouat/stress stress --vm 1 --vm-bytes 127m -t 5s
+```
+
+**CPU begrenzen**
+Das gleiche was mit dem Speicher funktioniert, geht auch mit der CPU. 
+
+```
+$ docker run -d --name load1 -c 2048 amouat/stress
+$ docker run -d --name load2 amouat/stress
+$ docker run -d --name load3 -c 512 amouat/stress
+$ docker run -d --name load4 -c 512 amouat/stress
+
+$ docker stats $(docker inspect -f {{.Name}} $(docker ps -q))
+```
+---
+
+### Kontinuierliche Integration
+
+---
+
+Welche Funktionen kann Jenkins übernehmen?
+
+CI, Modultests, ...
+
+---
+
+Wie baut man Modultests?
+Mit Skripts
+
+---
+
+Wie anders, als Manuell oder Zeitgesteuert könnten Jenkins Jobs auch gestartet werden?
+Änderungen an einem Git Repo. 
 
 
 
+# Projekt
+
+Ich habe mir als Projekt Rustdesk ausgesucht, da ich Nextcloud, einen Minecraft Server, und PiHole bereits habe. Zu Plex habe ich bereits eine Allternative (Jellyfinn), und Wordpress interessiert mich nicht. 
+Ich hätte mir auch einen Docker Stack auf Jellyfinn, Jellyseer, Radarr, Sonarr, Transmission und Jacket vorstellen können, doch das wäre unteranderem aufgrund von Mounts auf ein NAS eher komplex geworden, und hätte in der gegebenen Zeit wahrscheinlich nicht gereicht.
+Rustdesk ist eine Open Source alternative zu TeamViewer oder Anydesk. Zudem bietet Rustdesk die Option selbst einen Server zu hosten, wodurch der Datenschutz sichergestellt wird. Da ich Rustdesk sowieso mal aufsetzen wollt, eignet es sich nun perfekt. Aus diesem Grund werde ich Rustdesk auf einer Debian 13 VM auf meinem Server Cluster zuhause aufsetzen, und nicht mit GitBash. 
+
+### Installation
+![](Pasted%20image%2020260224112432.png)
 
 
+```
+services:
+  hbbs:
+    container_name: rustdesk-id
+    image: rustdesk/rustdesk-server:latest
+    environment:
+      - ALWAYS_USE_RELAY=Y
+    command: hbbs
+    volumes:
+      - ./data:/root
+    network_mode: "host"
 
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+
+  hbbr:
+    container_name: rustdesk-relay
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+    restart: unless-stopped
+
+```
+
+Um die Rustdesk Clients richtig konfigurieren zu können, wird noch der Server key benötigt. Dieser ist im in der Compose.yml hintrelegten verzeichniss zu finden. Bei mir hiess die Datei mit dem key  "id_ed25519.pub", aber die nummer kann variieren. 
+![](Pasted%20image%2020260224113936.png)
+
+Der Inhalt der Datei ist der Key, welcher im Client eingegeben werden muss. 
+Die Konfiguration wird im Client unter "Einstellungen", "Netzwerk" geändert.  Zudem muss in der Konfiguration der Server angegeben werden. ![](Pasted%20image%2020260224125744.png)
+
+Wenn nun 2 Clients auf diesen Server eingestellt sind, können diese über ihre ID (und das Passwort oder Push Benachrichtigung) aufeinander zugreifen. Mit der aktuellen Konfiguration kann der Server nicht aus dem Internet verwendet werden. Ich werde dies auch nicht Umkonfigurieren, da Rustdesk und Cloudflared nicht kompatibel sind. In meinem Netz Zuhause kann ich Rustdesk nun aber verwenden. 
+Quellen für die Inkompatibilität: https://community.cloudflare.com/t/rustdesk-compatible/507510
+https://www.reddit.com/r/selfhosted/comments/x8oe7z/rustdesk_with_cloudflare_tunnels/
+https://forums.unraid.net/topic/128100-rustdesk-server-with-cloudflare-and-nginx-not-reachable/
+
+
+### Monitoring
+Ich entscheide mich als Monitoring lösung fpr Uptime Kuma, da ich so prüfen kann, ob der Dienst weiterhin erreichbar ist. im Optimalfall würde Uptime Kuma auf einer anderen Maschine laufen (so wie es auch bei mir zuhause ist, aber ich muss für die Doku eine weitere Instanz aufsetzen. )
+Um Uptimekuma hinzuzufügen, kann einfach ein weiterer service in dre Docker-compose hinzugefügt werden. Die neue docker-compose.yml sieht wie folgt aus:
+
+```
+services:
+  hbbs:
+    container_name: rustdesk-id
+    image: rustdesk/rustdesk-server:latest
+    environment:
+      - ALWAYS_USE_RELAY=Y
+    command: hbbs
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+
+  hbbr:
+    container_name: rustdesk-relay
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+    restart: unless-stopped
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    ports:
+      # <Host Port>:<Container Port>
+      - "3001:3001"
+```
+
+Anschliessend wieder `docker-compose down` und `docker-compose up -d` ausführen, damit die Änderungen an der Compose Datei übernommen werden. Wen alles funktioniert, sollte man nun sehen, wie das Immage von Uptimekuma heruntergeladen wird. 
+![](Pasted%20image%2020260224131257.png)
+
+Wen alles funktioniert, sollte man nun über [IP-Adresse-des-servers]:3001 auf die Webseite von Uptime Kuma kommen. Dort kann man auswählen, welche datenbank man verwenden will. Am einfachsten ist die Variante
+
+
+![](Pasted%20image%2020260224132124.png)
+Danach einen Admin account erstellen (admin, 123admin). 
+
+Anschliessen kann man Dinge überwachen, wie zum Beispiel die Internetverbindung (Ping an 1.1.1.1). Di ebeste möglichkeit einen Docker zu überwachen ist allerdings, den docker socket einubinden. Dazu muss die docker-compose.yml erneut angepasst werden, und die folgende Zeile unter "volumes" beim Service Uptime Kuma hinzugefügt werden. 
+```shell
+- /var/run/docker.sock:/var/run/docker.sock
+```
+![](Pasted%20image%2020260224135947.png)
+
+Anschliessen kann man im Webinterface einen neuen Monitor mit dem Typ "Docker-Container" erstellen. 
+Es muss der Anzeigename, der Containername und der Dockerhost eingegeben werden. (Docker-Daemon ist  `/var/run/docker.sock`, der Verbindungstyp "Socket")![](Pasted%20image%2020260224140512.png)
+Nun werden die Docker Container Überwacht. Um dies zu testen, kann man auch einen der beiden Rustdesk Container stoppen, dann sollte der Monitor auf "DOWN" springen. 
+Command zum stoppen des Rustdesk Relay Container:
+```
+docker stop rustdesk-relay
+```
+
+![](Pasted%20image%2020260224141642.png)
+Wenn der Container anschiessend wieder gestartet wird, springt auch Uptime Kuma wieder auf Up. 
+
+Produktiv kann ein Uptime Kuma viele Verschiedene Dienste übermachen. Zudem können mehrere Status Seiten erstellt werden. ![](Pasted%20image%2020260224142518.png)
+![](Pasted%20image%2020260224142539.png)
+
+### Weiteres 
+Da ich im docker-compose im bereich der beiden Rustdesk services keine Ports angegeben habe, werden die Standart Ports Von Rustdesk verwendet. Diese sind 21114-2118. Im Uptime Kuma Service habe ich den Port 3001 im Container auf den Port 3001 auf dem Host gemappt. Um die Sicherheit zu erhöhen könnte man diesen ändern, zb. auf 3029. (Dadurch wird ein Port verwendet, welcher nicht so bekannt ist/nicht für Uptime Kuma bekannt ist). 
+
+Die Daten der Einzelnen Services sind persistent auf dem Hostsystem gespeichert (Jene  von Rustdesk im Unterordner "data", die von uptime-kuma unter "uptime/data".)
+Wenn die Daten nicht persistet gespeichert werden würden, müsste man die Monitore nach jedem Neustart neu einrichten. 
 
 
 
