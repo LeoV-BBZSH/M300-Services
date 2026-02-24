@@ -1366,15 +1366,16 @@ Um die Rustdesk Clients richtig konfigurieren zu können, wird noch der Server k
 Der Inhalt der Datei ist der Key, welcher im Client eingegeben werden muss. 
 Die Konfiguration wird im Client unter "Einstellungen", "Netzwerk" geändert.  Zudem muss in der Konfiguration der Server angegeben werden. ![](Pasted%20image%2020260224125744.png)
 
-Wenn nun 2 Clients auf diesen Server eingestellt sind, können diese über ihre ID (und das Passwort oder Push Benachrichtigung) aufeinander zugreifen. Mit der aktuellen Konfiguration kann der Server nicht aus dem Internet verwendet werden. Ich werde dies auch nicht Umkonfigurieren, da Rustdesk und Cloudflared nicht kompatibel sind. In meinem Netz Zuhause kann ich Rustdesk nun aber verwenden. 
+Wenn nun 2 Clients auf diesen Server eingestellt sind, können diese über ihre ID (und das Passwort oder Push Benachrichtigung) aufeinander zugreifen. 
+Mit der aktuellen Konfiguration kann der Server nicht aus dem Internet verwendet werden. Ich werde dies auch nicht Umkonfigurieren, da Rustdesk und Cloudflared nicht kompatibel sind. (Einschränkung auf der Seite von Cloudflare, TCP/UDP Freigaben funktionieren (noch) nicht.) Itern in meinem Netz Zuhause kann ich Rustdesk nun aber verwenden. 
 Quellen für die Inkompatibilität: https://community.cloudflare.com/t/rustdesk-compatible/507510
 https://www.reddit.com/r/selfhosted/comments/x8oe7z/rustdesk_with_cloudflare_tunnels/
 https://forums.unraid.net/topic/128100-rustdesk-server-with-cloudflare-and-nginx-not-reachable/
 
 
 ### Monitoring
-Ich entscheide mich als Monitoring lösung fpr Uptime Kuma, da ich so prüfen kann, ob der Dienst weiterhin erreichbar ist. im Optimalfall würde Uptime Kuma auf einer anderen Maschine laufen (so wie es auch bei mir zuhause ist, aber ich muss für die Doku eine weitere Instanz aufsetzen. )
-Um Uptimekuma hinzuzufügen, kann einfach ein weiterer service in dre Docker-compose hinzugefügt werden. Die neue docker-compose.yml sieht wie folgt aus:
+Ich entscheide mich als Monitoring Lösung für Uptime Kuma, da ich so prüfen kann, ob der Dienst weiterhin erreichbar ist. Im Optimalfall würde Uptime Kuma auf einer anderen Maschine laufen (so wie es auch bei mir zuhause ist, aber ich muss für die Doku eine weitere Instanz aufsetzen. )
+Um Uptime Kuma hinzuzufügen, kann einfach ein weiterer Service in der docker-compose Datei hinzugefügt werden. Die neue docker-compose.yml sieht wie folgt aus:
 
 ```
 services:
@@ -1413,7 +1414,7 @@ services:
 Anschliessend wieder `docker-compose down` und `docker-compose up -d` ausführen, damit die Änderungen an der Compose Datei übernommen werden. Wen alles funktioniert, sollte man nun sehen, wie das Immage von Uptimekuma heruntergeladen wird. 
 ![](Pasted%20image%2020260224131257.png)
 
-Wen alles funktioniert, sollte man nun über [IP-Adresse-des-servers]:3001 auf die Webseite von Uptime Kuma kommen. Dort kann man auswählen, welche datenbank man verwenden will. Am einfachsten ist die Variante
+Wen alles funktioniert, sollte man nun über 192.168.X.X:3001 auf die Webseite von Uptime Kuma kommen. Dort kann man auswählen, welche Datenbank man verwenden will. Am einfachsten ist die Variante
 
 
 ![](Pasted%20image%2020260224132124.png)
