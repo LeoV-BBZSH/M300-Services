@@ -1,0 +1,32 @@
+services:
+  hbbs:
+    container_name: rustdesk-id
+    image: rustdesk/rustdesk-server:latest
+    environment:
+      - ALWAYS_USE_RELAY=Y
+    command: hbbs
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+
+  hbbr:
+    container_name: rustdesk-relay
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    volumes:
+      - ./data:/root
+    network_mode: "host"
+    restart: unless-stopped
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    restart: unless-stopped
+    volumes:
+      - ./uptime/data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      # <Host Port>:<Container Port>
+      - "3001:3001"

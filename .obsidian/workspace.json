@@ -185,6 +185,8 @@
   },
   "active": "46782ef2a187b6cf",
   "lastOpenFiles": [
+    "Projekt/docker-compose.yml",
+    "Projekt",
     "Pasted image 20260224142539.png",
     "Pasted image 20260224142518.png",
     "Pasted image 20260224141642.png",
@@ -195,7 +197,6 @@
     "Pasted image 20260224125744.png",
     "Pasted image 20260224113936.png",
     "Pasted image 20260224112432.png",
-    "Pasted image 20260224082559.png",
     "Docker/LB3-Docker/Dockerfile",
     "Docker/LB3-Docker",
     "Docker/Neuer Ordner",
@@ -204,7 +205,6 @@
     "Docker/LB3-Vagrant",
     "Docker",
     "Neuer Ordner",
-    "VMs/LB2-Ubuntu/webalizer/index.html",
-    "VMs/LB2-Ubuntu/webalizer/webalizer.hist"
+    "VMs/LB2-Ubuntu/webalizer/index.html"
   ]
 }
