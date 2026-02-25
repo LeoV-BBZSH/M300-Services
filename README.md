@@ -1776,6 +1776,8 @@ Wie anders, als Manuell oder Zeitgesteuert könnten Jenkins Jobs auch gestartet 
 
 # Projekt
 
+**Das eigentliche Projekt ist in diesem Repository Dokumentiert. Ich habe jedoch zuhause einen Media Stack aufgesetzt und werde auch diese Dokumentation anhängen. Diese ist im Ordner "MediaStack" im Repo zu finden. Sie können gerne beide bewerten. Falls nur eines möglich ist, Bewerten sie bitte Rustdesk. (Dieses welches nach diesem Text folgt)**
+
 Ich habe mir als Projekt Rustdesk ausgesucht, da ich Nextcloud, einen Minecraft Server, und PiHole bereits habe. Zu Plex habe ich bereits eine Alternative (Jellyfinn), und WordPress interessiert mich nicht. 
 Ich hätte mir auch einen Docker Stack auf Jellyfinn, Jellyseer, Radarr, Sonarr, Transmission und Jacket vorstellen können, doch das wäre unteranderem aufgrund von Mounts auf ein NAS eher komplex geworden, und hätte in der gegebenen Zeit wahrscheinlich nicht gereicht. 
 Rustdesk ist eine Open Source alternative zu TeamViewer oder Anydesk. Zudem bietet Rustdesk die Option selbst einen Server zu hosten, wodurch der Datenschutz sichergestellt wird. Da ich Rustdesk sowieso mal aufsetzen wollt, eignet es sich nun perfekt. Aus diesem Grund werde ich Rustdesk auf einer Debian 13 VM auf meinem Server Cluster zuhause aufsetzen, und nicht mit GitBash. 
