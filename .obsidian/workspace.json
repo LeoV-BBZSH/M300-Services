@@ -185,6 +185,8 @@
   },
   "active": "46782ef2a187b6cf",
   "lastOpenFiles": [
+    "Pasted image 20260225153016.png",
+    "Pasted image 20260225152832.png",
     "Kubernetes/vagrant-kubernetes/configs/join.sh",
     "Kubernetes/vagrant-kubernetes/configs/config",
     "Kubernetes/vagrant-kubernetes/configs",
@@ -197,7 +199,6 @@
     "Kubernetes/vagrant-kubernetes/scripts/node.sh",
     "Kubernetes/vagrant-kubernetes/scripts/master.sh",
     "Kubernetes/vagrant-kubernetes/scripts/dashboard.sh",
-    "Kubernetes/vagrant-kubernetes/scripts/common.sh",
     "Kubernetes/vagrant-kubernetes/img/vagrant-kubernetes.png",
     "Kubernetes/vagrant-kubernetes/TEST_CASES.md",
     "Kubernetes/vagrant-kubernetes/README.md",
@@ -208,7 +209,6 @@
     "Pasted image 20260225095833.png",
     "Pasted image 20260225081859.png",
     "Pasted image 20260224142539.png",
-    "Pasted image 20260224142518.png",
-    "Pasted image 20260224141642.png"
+    "Pasted image 20260224142518.png"
   ]
 }

@@ -1948,7 +1948,28 @@ Dann kann Vagrant gestartet werden.
 vagrant up
 ```
 ![](Pasted%20image%2020260225144455.png)
-Das Starten der VM wird ziemlich lange Dauern (mehr als 5 Minuten)
+Das Starten der VM wird ziemlich lange Dauern (mehr als 5 Minuten) Alle Windows warnungen sollten mit "Ja" bestätigt werden.  
+
+Anschliessend die Kubeconfig variable setzen. 
+
+```shell
+cd vagrant-kubernetes
+export KUBECONFIG=$PWD/configs/config
+```
+
+Um das Kubernetes Dashboard zu installieren muss die Linie im Vagrant File auskommentiert werden. 
+Wenn man es im Nachhinein installieren will, muss man es auskommentieren, und zudem den folgenden Command absetzen:
+
+```shell
+vagrant ssh -c "/vagrant/scripts/dashboard.sh" master
+```
+
+![](Pasted%20image%2020260225153016.png)
+
+Der Logintoken kann folgendermassen erhalten werden:
+```shell
+kubectl -n kubernetes-dashboard get secret/admin-user -o go-template="{{.data.token | base64decode}}"
+```
 
 
 
