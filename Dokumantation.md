@@ -115,17 +115,16 @@ Nach der Installation sollte man unter Settings, Extension  die folgenden extens
 - vscode-pdf Extension
 - Auto Markdown TOC
 
-Ein Vorteil von VSCode ist, dass die Git pulls, commits und Pushes direkt in VSCode gemacht werden können. Zuzu drückt man auf der Git Symbol in der linken Seitenleiste, staged dann die änderungen, Commited sie und Pusht sie dann ins Online-Repo. 
+Ein Vorteil von VSCode ist, dass die Git pulls, commits und Pushes direkt in VSCode gemacht werden können. Dazu drückt man auf der Git Symbol in der linken Seitenleiste, Staged dann die Änderungen, Commited sie und Pusht sie dann ins Online-Repo.![](Pasted%20image%2020260225095833.png)
 
-![](Pastedimage20260210083813.png)
-
-
-
+Ich habe mich allerdings dazu entschieden anstatt VSCode Obsidian zu verwenden, da die Markdownformatierung dort einfacher ist. Man muss allerdings beachten, das die Satndarteinstellungen für Bilder dort nicht dem Markdown Syntax entsprechen. Diese Einstellung muss somit angepasst werden. 
+![](Pasted%20image%2020260225100248.png)
 
 
-# Tag 2
 
-Cloud Computing ist, wenn man Programme nicht auf dem Lokelen rechner ausführt, sondern auf einem Rechner oder Server in der Ferne. (zb. über das Internet.)
+# 20 Infrastruktur-Automatisierung
+## Cloud Computing
+Cloud Computing ist, wenn man Programme nicht auf dem Lokalen Rechner ausführt, sondern auf einem Rechner oder Server in der Ferne. (zb. über das Internet.)
 
 **Saas** = Infrastructure as a Service 
 ![](Pastedimage20260210084906.png)
@@ -134,29 +133,28 @@ Cloud Computing ist, wenn man Programme nicht auf dem Lokelen rechner ausführt,
 ![](Pastedimage20260210085100.png)
 **IaaS** = Infrastructure as a Service ![](Pastedimage20260210085225.png)
 
-Zudem gibt es seit dem Aufkommen von Docker/ Container eine neue ebene. Diese heisst **CaaS** (Container as a service).
+Zudem gibt es seit dem Aufkommen von Docker/ Container eine neue ebene. Diese heisst **CaaS** (Container as a Service).
 Diese Ebene ist dafür zuständig, containerisierten Workload auf den Ressourcen auszuführen, die eine IaaS-Cloud zur Verfügung stellt. Die Technologien dieser Ebene wie Docker, Kubernetes oder Mesos sind allesamt quelloffen verfügbar. Somit kann man sich seine private Cloud ohne Gefahr eines Vendor Lock-ins aufbauen.
 
-# Microsoft Azure
-Azure verwendet Virtualisierung, damit alle Produkte laufen können. Die Server auf denen die Virtuellen Maschienen laufen nennt man Hypervisor. Ein solcher Server ist meist sehr stark, und ist die Heimat von Mehreren Virtuellen Maschinen. Die Virtuellen Maschienen sind dabei Unabhängig von den anderen, und können Alle möglichen Betriebssysteme haben. 
+### Microsoft Azure
+Azure verwendet Virtualisierung, damit alle Produkte laufen können. Die Server auf denen die Virtuellen Maschienen laufen nennt man Hypervisor. Ein solcher Server ist meist sehr stark, und ist die Heimat von Mehreren Virtuellen Maschinen. Die Virtuellen Maschinen sind dabei Unabhängig von den anderen, und können Alle möglichen Betriebssysteme haben. 
 
-Die Server sind in soganannten Racks zusammengefasst. Wenn jemand eine VM erstellt, wird die Anfrage zuerst über die API an den sogenannten "Orchestrator" geleitet. Dieser sammelt alle Informationen und sucht sich dann das beste Rack aus, und leitet die Informationen dorthin weiter. 
+Die Server sind in sogenannten Racks zusammengefasst. Wenn jemand eine VM erstellt, wird die Anfrage zuerst über die API an den sogenannten "Orchestrator" geleitet. Dieser sammelt alle Informationen und sucht sich dann das beste Rack aus, und leitet die Informationen dorthin weiter. 
 
-Weitere Anbieter für Cloudcomputig sind AWS, Google Cloud, Oracle, ...
+Weitere Anbieter für Cloud-Computing sind AWS, Google Cloud, Oracle, ...
 
 
-# Infrastructure as  Code
+## Infrastructure as  Code
 Früher war IT an physische Hardware gebunden und wurde manuell betrieben – Änderungen waren langsam und teuer.  
 Heute sind Systeme virtualisiert und automatisiert, Änderungen sind schnell umsetzbar.
 
 **Infrastructure as Code** bedeutet, IT-Infrastruktur wie Software zu behandeln: Sie wird in Dateien definiert, versioniert, getestet und automatisch bereitgestellt.
 
-**Ziele von IaC** sind schnelle Änderungen, weniger manuelle Arbeit, stabile und reproduzierbare Systeme sowie kontinuierliche Verbesserungen statt grosser Umbauprojekte.
+Ziele von IaC sind schnelle Änderungen, weniger manuelle Arbeit, stabile und reproduzierbare Systeme sowie kontinuierliche Verbesserungen statt grosser Umbauprojekte.
 
-# Vagrant
+## Vagrant
 
-Wichtige Commands:
-
+### Wichtige Commands
 
 | Befehl          | Beschreibung                                                                                                      |
 | --------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -167,18 +165,17 @@ Wichtige Commands:
 | vagrant port    | Zeigt die Weitergeleiteten Ports der VM an                                                                        |
 | vagrant halt    | Stoppt die laufende Virtuelle Maschine                                                                            |
 | vagrant destroy | Stoppt die Virtuelle Maschine und zerstört sie.                                                                   |
-|                 |                                                                                                                   |
-|                 |                                                                                                                   |
-Diverses: Mit vagrant ssh kann man sich in die VM verbinden. Dort kann man dan wie auf einer normalen VM arbeiten. 
 
-Achtung, die dinge die man in der VM macht, werden nach dem neu starten nicht übernommen. Dazu müsste man die Commands im Vagrant file hinzufügen. Allternativ kann man sich auch eine externe Provisionierungsdatei bauen. 
+Diverses: Mit `vagrant ssh` kann man sich in die VM verbinden. Dort kann man dann wie auf einer normalen VM arbeiten. 
 
-**Vagrant Boxen**  
+Achtung, die dinge die man in der VM macht, werden nach dem neu starten nicht übernommen. Dazu müsste man die Commands im Vagrantfile hinzufügen. Allternativ kann man sich auch eine externe Provisionierungsdatei bauen. 
+
+### Vagrant Boxen  
 Boxen sind vorkonfigurierte VM-Vorlagen, die die Softwareverteilung und Entwicklung beschleunigen. Einmal heruntergeladen, werden sie lokal gespeichert. Boxen lassen sich mit `vagrant box add` hinzufügen und mit `vagrant box remove` löschen. Sie folgen meist dem Schema _Entwickler/Box_ (z. B. `ubuntu/xenial64`) und werden über die Vagrant-Boxen-Plattform bereitgestellt und geteilt.
 
-**Konfiguration**  
-Die gesamte VM-Konfiguration erfolgt im **Vagrantfile** (Ruby-ähnliche Syntax). Dort werden Box, Netzwerk, Hostname und Provisioning definiert.
-Beispiel:
+### Konfiguration
+Die gesamte VM-Konfiguration erfolgt im Vagrantfile. Dort werden Box, Netzwerk, Hostname und Provisioning definiert.
+**Beispiel:**
 
 ```
     Vagrant.configure("2") do |config|
@@ -191,9 +188,9 @@ Beispiel:
     end
 ```
 
-**Provisioning**  
+### Provisioning  
 Provisioning führt automatisch Befehle aus (meist Shell/Bash), z. B. um Software wie Apache zu installieren.
-Beispiel:
+**Beispiel:**
 ```
     config.vm.provision :shell, inline: <<-SHELL 
         sudo apt-get update
@@ -201,10 +198,10 @@ Beispiel:
      SHELL
 ```
 
-**Provider**  
+### Provider  
 Der Provider legt fest, welche Virtualisierungsplattform genutzt wird (z. B. VirtualBox) und erlaubt Einstellungen wie Arbeitsspeicher.
 
-Beispiel:
+**Beispiel:**
 ```
 config.vm.provider "virtualbox" do |vb|
         vb.memory = "512"  
@@ -212,8 +209,8 @@ config.vm.provider "virtualbox" do |vb|
 ```
 
 
-### **Reihenfolge für den Betrieb, das Updaten und das Zerstören einer VM.** 
-**Box hinzufügen**  
+### Reihenfolge für den Betrieb, das Updaten und das Zerstören einer VM.
+#### Box hinzufügen
 Eine neue Box wird zur lokalen Registry hinzugefügt mit:
 
 ```
@@ -226,7 +223,7 @@ Alle lokal verfügbaren Boxen lassen sich anzeigen mit:
 `vagrant box list`
 ```
 
-**VM erstellen**  
+#### VM erstellen 
 Zum Erstellen einer virtuellen Maschine wird ein Vagrantfile angelegt und die Provisionierung gestartet:
 
 ```
@@ -239,7 +236,7 @@ Der aktuelle Status der VM kann jederzeit abgefragt werden mit:
 `vagrant status`
 ```
 
-**VM aktualisieren**  
+#### VM aktualisieren  
 Nach Anpassungen am Vagrantfile kann die VM neu provisioniert werden:
 
 ```
@@ -252,14 +249,12 @@ Alternativ kann die VM komplett neu erstellt werden:
 `vagrant destroy -f vagrant up`
 ```
 
-**VM löschen**  
+#### VM löschen
 Zum vollständigen Entfernen der virtuellen Maschine dient folgender Befehl:
 
 ```
 vagrant destroy -f
 ```
-
-
 
 ### Synchronisierte Ordner
 Mithilfe von synchronisierten Ordnern kann die VM auf ein Verzeichnis auf dem Host System zugreiffen. Dies ist vorallem bei Webservern, docker, usw. sinvoll. 
@@ -271,7 +266,7 @@ Mithilfe von synchronisierten Ordnern kann die VM auf ein Verzeichnis auf dem Ho
 ```
 **Wichtig:** Standardmässig wird das aktuelle Vagrantfile-Verzeichnis in der VM unter /vagrant gemountet.
 
-# Packer
+## Packer
 Packer ist ein Tool zur Erstellung von Images bzw. Boxen für eine Vielzahl von Dynamic Infrastructure Platforms mittels einer Konfigurationsdatei.
 Packer wird ähnlich wie Vagrant über die CLI bedient.
 Der wichtigste Befehl ist:
@@ -324,10 +319,7 @@ Die Builder erstellen ein Image für eine bestimmte dynamische Infrastruktur-Pla
 
 **Post-processors**  
 Sind Bestandteile von Packer, die das Ergebnis eines Builders oder eines anderen Post-Prozessor übernehmen, um damit ein neues Artefakt zu erstellen.
-
-
-
-# LB2
+## LB2
 
 Zuerst erstellt man eine VM. Dies wurde Bereits Beschrieben, daher ist hier nur ein Foto zu sehen. ![](Pastedimag20260210112819.png)
 
