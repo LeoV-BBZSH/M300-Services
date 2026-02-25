@@ -1,20 +1,22 @@
-Zuerst muss Git/Bash installiert werden. Dies ist notwerdig, da die Befehle eigentlich für Linux gemacht sind, und Windows gewisse Befehle nicht kennt. Dies kann von https://git-scm.com/install/ heruntergeladen werden. Bei der Installation kann alles auf Standart belassen werden ![alt text](image.png)
+# 10-Toolumgebung
+## Installation und Konfiguration von Git
+Zuerst muss Git/Bash installiert werden. Dies ist notwendig, da die Befehle, welche wir verwenden werden, eigentlich für Linux gemacht sind, und Windows gewisse Befehle nicht kennt. Dies kann von https://git-scm.com/install/ heruntergeladen werden. Bei der Installation kann alles auf Standard belassen werden ![alt text](image.png)
 
 Wenn nachfolgend von Terminal/CMD gesprochen wird, ist Bash gemeint. 
 
-Nun muss als erstes Git konfiguriert werden. Dazu werden der Githb Username und die Email adresse benötigt. ![alt text](image-1.png)
+Nun muss als erstes Git konfiguriert werden. Dazu werden der Github Username und die Email Adresse benötigt. (Falls man noch keinen Github Account hat, muss man diesen erst erstellen.)![alt text](image-1.png)
 
-Anschliessen kann als Test das folgende Repository geklont werden. ( https://gitlab.com/ch-tbz-it/Stud/m300/M300) Der Command dazu lautet "git clone [https://xxxxx.com]"![alt text](image-2.png)
+Anschliessend kann als Test das folgende Repository geklont werden. ( https://gitlab.com/ch-tbz-it/Stud/m300/M300) Der Command dazu lautet "git clone [https://xxxxx.com]"![alt text](image-2.png)
 
 
 Anschliessend kann man mit den Commands, welche im Bild zu sehen sind weiter testen, ob alles funktioniert. ![alt text](image-3.png)
 
-Damit man nun über Bash testen kann, ob auch der Upload korrekt funktioniert, erstellt man am besten im Ordner des Repos ein neues textdoument. Anschliessend kann mit den befehlen 
+Damit man nun über Bash testen kann, ob auch der Upload korrekt funktioniert, erstellt man am besten im Ordner des Repos ein neues Textdokument. Anschliessend kann mit den befehlen 
 "  $ git add -A ."
 "  $ git commit -m "Mein Kommentar""
 "  $ git push"
-die Änderungen zu Github hochladen. 
-Anschliessen sollte der Inhat vom Lokalen Repo auch auf Github zu sehen sein. ![alt text](image-4.png)![alt text](image-5.png)
+die Änderungen zu GitHub hochladen. 
+Anschliessend sollte der Inhalt vom Lokalen Repo auch auf GitHub zu sehen sein. ![alt text](image-4.png)![alt text](image-5.png)
 
 Folgende Befehle mit Git sollte man sich merken, da diese immer wieder benötigt werden. 
 $  git status                      # Geänderte Datei(en) werden rot aufgelistet
@@ -24,37 +26,100 @@ $  git commit -m "Mein Kommentar"  # Upload wird "commited" > Kommentar zu Dokum
 $  git status                      # Dateien werden nun als "zum Pushen bereit" angezeigt
 $  git push                        #Upload bzw. Push wird durchgeführt
 
-# VirtualBox
+## VirtualBox
 VirtualBox ist ein Tool zum erstellen und verwalten von Virtuellen Maschinen, ähnlich wie VMware Workstation. 
 Zuerst muss VirtualBox von der offiziellen Webseite heruntergeladen werden. https://www.virtualbox.org/ 
 Anschliessend folgt die Installation mit den Standartwerten. Ich werde deshalb nicht weiter darauf eingehen. ![](Pasted-image-20260210081320.png)
 
 Anschliessend kann man über den Button "Neu" eine VM erstellen. Es empfiehlt sich den Haken bei "Unbeaufsichtigter Installation zu setzen, da das Aufsetzen somit nichtmehr ganz so lang geht. Zudem kann angegeben werden, wie die VM heissen soll,  wo sie gespeichert ist, und welche ISo verwendet werden soll.  ![alt text](image-6.png)
+
 Nachdem man anschliessend auf Vorwärts geklickt hat, kommt ein neues Fenster, bei welchem man Benutzername und Passwort eingeben muss. Auch der Host und Domainnamen können hier eigegeben werden. (Kommt nicht wenn man keine Unbeaufsichtigte installation macht. )![](Pastedimage20260210083020.png)
 
-![](Pastedimage20260210083632.png)
+Anschliessend kann man die Ressource der Virtuellen Maschine anpassen. (RAM, CPU, HDD)![](Pastedimage20260210083632.png)
 
+Die VM ist nun erstellt, und ist in der Übersicht zu sehen. 
 ![](Pastedimage20260210083644.png)
 
 
-![](Pastedimage20260210083654.png)
+Ich musste bei mir unter "Ändern", "Anzeige", der Grafikspeicher auf 128 MB erhöhen und den Grafikcontroller auf "VBoxVGA", die die VM sonst nicht startete/immer wieder hängenblieb, aufgrund von zu wenig Videospeicher. ![](Pasted%20image%2020260225081859.png)
 
+Fazit: Es dauert ziemlich lange eine VM manuell zu erstellen, selbst wenn man die einfachere Variante mit der Unbeaufsichtigten Installation wählt. Im Nächsten Kapitel wird deshalb eine Alternative dazu vorgestellt. 
+## Vagrant
+ Wie auch Git muss Vagrant zuerst von hier heruntergeladen werden. Da auch diese Installation nach Standartwerten erfolgt, wird dies hier nicht weiter vertieft. ![](Pastedimage20260210083706.png)
+ Nachdem die Software installiert wurde kann eine neue VM erstellt werden. Dazu macht man sich an einem Ort seiner Wahl einen neuen Ordner, und erstellt dann ein Vagrant file mit der korrekten Vorlage. 
+```shell
+vagrant init ubuntu/xenial64
+```
 
- ![](Pastedimage20260210083706.png)
+Nun kann die VM mit VirtualBox gestartet werden.
+
+```shell
+vagrant up --provider virtualbox
+```
+
 ![](Pastedimage20260210083715.png)
+Wenn man nun einen Befehl in der VM ausfühen möchte, muss man sich per ssh verbinden. Dazu wechselt man in das Verzeichnis der VM und gibt den Folgenden Command ein. Anschliessend befindet sich die CMD in der VM.  Man kann dort alle beliebigen Commands absetzen. ![](Pastedimage20260210083725.png)
 
-![](Pastedimage20260210083725.png)
+```shell
+vagrant ssh
+```
+![](Pastedimage20260210083725.png)Das die VM mit dem Provider VirtualBox erstellt worden ist, kann die VM in VirtualBox angesehen oder ausgeschaltet werden. 
+
+Fazit: Es ist weniger aufwendig, eine VM mit Vagrant zu erstellen, als diese immer selbst manuell aufzusetzen. 
+
+Das gleiche funktioniert übrigens auch auf einem Netzwerk Share. das das Vorgehen genau gleich ist, werde ich nicht weiter darauf eingehen. 
+
+Wie in der Nachfolgenden Bildern zusehen ist, ist es auch möglich, ein vagrant file aus einem Git Repo zu starten. Zudem wird in diesem File ein Ordner vom Hostsystem gemountet, damit man die index.html des Webservers einfacher bearbeiten kann. 
+Nachfolgen ist das Vagrantfile zu sehen. 
+
+```shell
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.network "forwarded_port", guest:80, host:8080, auto_correct: true
+  config.vm.synced_folder ".", "/var/www/html"
+config.vm.provider "virtualbox" do |vb|
+  vb.memory = "512"
+end
+config.vm.provision "shell", path: "add_ssh_pub.sh"
+config.vm.provision "shell", inline: <<-SHELL
+  # Packages vom lokalen Server holen
+  # sudo sed -i -e"1i deb {{config.server}}/apt-mirror/mirror/archive.ubuntu.co>
+  sudo apt-get update
+  sudo apt-get -y install apache2
+SHELL
+end
+```
 
 ![](Pastedimage20260210083737.png)
-
+Ohne etwas an der index.html zu ändern, wird die Default Webserver seite angezeigt. 
 ![](Pastedimage20260210083750.png)
+Wenn man auf dem Hostrechner die Datei nun ändert, und anschliessend die VM löscht und wieder erstellt, wird der neue Inhalt angezeigt. 
+
+```shell
+vagrant destroy -f
+vagrant up
+```
 
 ![](Pastedimage20260210083757.png)
 
 ![](Pastedimage20260210083804.png)
 
 
+## Visual Studio Code
+
+Die [Installation](https://code.visualstudio.com/) ist sehr einfach, zudem hat man das Programm sehr wahrscheinlich eh schon installiert, so wie ich. daher wird hier nicht auf die Installation eingegangen. 
+
+Nach der Installation sollte man unter Settings, Extension  die folgenden extensions herunterladen und installieren:
+- Markdown All in One
+- Vagrant Extension
+- vscode-pdf Extension
+- Auto Markdown TOC
+
+Ein Vorteil von VSCode ist, dass die Git pulls, commits und Pushes direkt in VSCode gemacht werden können. Zuzu drückt man auf der Git Symbol in der linken Seitenleiste, staged dann die änderungen, Commited sie und Pusht sie dann ins Online-Repo. 
+
 ![](Pastedimage20260210083813.png)
+
+
 
 
 
@@ -1441,10 +1506,10 @@ Produktiv kann ein Uptime Kuma viele Verschiedene Dienste übermachen. Zudem kö
 ![](Pasted%20image%2020260224142539.png)
 
 ### Weiteres 
-Da ich im docker-compose im bereich der beiden Rustdesk services keine Ports angegeben habe, werden die Standart Ports Von Rustdesk verwendet. Diese sind 21114-2118. Im Uptime Kuma Service habe ich den Port 3001 im Container auf den Port 3001 auf dem Host gemappt. Um die Sicherheit zu erhöhen könnte man diesen ändern, zb. auf 3029. (Dadurch wird ein Port verwendet, welcher nicht so bekannt ist/nicht für Uptime Kuma bekannt ist). 
+Da ich im docker-compose im bereich der beiden Rustdesk services keine Ports angegeben habe, werden die Standard Ports Von Rustdesk verwendet. Diese sind 21114-2118. Im Uptime Kuma Service habe ich den Port 3001 im Container auf den Port 3001 auf dem Host gemappt. Um die Sicherheit zu erhöhen könnte man diesen ändern, zb. auf 3029. (Dadurch wird ein Port verwendet, welcher nicht so bekannt ist/nicht für Uptime Kuma bekannt ist). 
 
 Die Daten der Einzelnen Services sind persistent auf dem Hostsystem gespeichert (Jene  von Rustdesk im Unterordner "data", die von uptime-kuma unter "uptime/data".)
-Wenn die Daten nicht persistet gespeichert werden würden, müsste man die Monitore nach jedem Neustart neu einrichten. 
+Wenn die Daten nicht persistent gespeichert werden würden, müsste man die Monitore nach jedem Neustart neu einrichten. 
 
 
 
