@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Dokumantation.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dokumantation"
+              "title": "README"
             }
           }
         ]
@@ -185,26 +185,30 @@
   },
   "active": "46782ef2a187b6cf",
   "lastOpenFiles": [
+    "Kubernetes/vagrant-kubernetes/configs/join.sh",
+    "Kubernetes/vagrant-kubernetes/configs/config",
+    "Kubernetes/vagrant-kubernetes/configs",
+    "Pasted image 20260225144455.png",
+    "Pasted image 20260225144305.png",
+    "Kubernetes/vagrant-kubernetes/synced_volumes/common",
+    "Kubernetes/vagrant-kubernetes/synced_volumes",
+    "Kubernetes/vagrant-kubernetes/settings.yaml",
+    "Kubernetes/vagrant-kubernetes/scripts/post-provision.sh",
+    "Kubernetes/vagrant-kubernetes/scripts/node.sh",
+    "Kubernetes/vagrant-kubernetes/scripts/master.sh",
+    "Kubernetes/vagrant-kubernetes/scripts/dashboard.sh",
+    "Kubernetes/vagrant-kubernetes/scripts/common.sh",
+    "Kubernetes/vagrant-kubernetes/img/vagrant-kubernetes.png",
+    "Kubernetes/vagrant-kubernetes/TEST_CASES.md",
+    "Kubernetes/vagrant-kubernetes/README.md",
+    "Pasted image 20260225142706.png",
+    "README_old.md",
+    "README.md",
     "Pasted image 20260225100248.png",
     "Pasted image 20260225095833.png",
     "Pasted image 20260225081859.png",
-    "Projekt/docker-compose.yml",
-    "Projekt",
     "Pasted image 20260224142539.png",
     "Pasted image 20260224142518.png",
-    "Pasted image 20260224141642.png",
-    "Pasted image 20260224140512.png",
-    "Pasted image 20260224135947.png",
-    "Pasted image 20260224132124.png",
-    "Pasted image 20260224131257.png",
-    "Pasted image 20260224125744.png",
-    "Docker/LB3-Docker/Dockerfile",
-    "Docker/LB3-Docker",
-    "Docker/Neuer Ordner",
-    "Docker/LB3-Vagrant/ubuntu-xenial-16.04-cloudimg-console.log",
-    "Docker/LB3-Vagrant/Vagrantfile",
-    "Docker/LB3-Vagrant",
-    "Docker",
-    "Neuer Ordner"
+    "Pasted image 20260224141642.png"
   ]
 }
